@@ -9,13 +9,29 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
+REPS = 0
 
 
 # ---------------------------------------------------- TIMER RESET -------------------------------------------------- #
 
 # ------------------------------------------------------ TIMER MECHANISM -------------------------------------------- #
 def start_timer():
-    count_down(302)
+    global REPS
+    REPS += 1
+
+    work_sec = WORK_MIN * 60
+    short_break_sec = SHORT_BREAK_MIN * 60
+    long_break_sec = LONG_BREAK_MIN * 60
+
+    if REPS % 8 == 0:
+        count_down(long_break_sec)
+        timer_label.config(text="Long Break", fg=RED)
+    elif REPS % 2 == 0:
+        count_down(short_break_sec)
+        timer_label.config(text="Short Break", fg=PINK)
+    else:
+        timer_label.config(text="Time to Work", fg=GREEN)
+        count_down(work_sec)
 
 
 # ------------------------------------------------- COUNTDOWN MECHANISM ---------------------------------------------- #
@@ -25,14 +41,16 @@ def count_down(count):
     # getting the number of seconds
     count_seconds = count % 60
 
-    if count_seconds == 0:
-        count_seconds = "00"
-    elif count_seconds < 10:
+    # Formatting the time
+    if count_seconds < 10:
         count_seconds = f"0{count_seconds}"
     # This is changing the text in the tomato, the 00:00
     canvas.itemconfig(timer_text, text=f"{count_minutes}:{count_seconds}")
     if count > 0:
         window.after(1000, count_down, count - 1)
+    else:
+        # Once we reach 0, it calls start timer again to start the new time
+        start_timer()
 
 
 # -------------------------------------------------------- UI SETUP ------------------------------------------------- #
