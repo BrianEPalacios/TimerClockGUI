@@ -10,10 +10,13 @@ WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 REPS = 0
+CHECKMARK_SYMBOL = "🍙"
 
 
 # ---------------------------------------------------- TIMER RESET -------------------------------------------------- #
 
+def reset_timer():
+    
 # ------------------------------------------------------ TIMER MECHANISM -------------------------------------------- #
 def start_timer():
     global REPS
@@ -24,14 +27,17 @@ def start_timer():
     long_break_sec = LONG_BREAK_MIN * 60
 
     if REPS % 8 == 0:
-        count_down(long_break_sec)
+        # long_break_sec
+        count_down(20)
         timer_label.config(text="Long Break", fg=RED)
     elif REPS % 2 == 0:
-        count_down(short_break_sec)
+        # short_break_sec
+        count_down(10)
         timer_label.config(text="Short Break", fg=PINK)
     else:
         timer_label.config(text="Time to Work", fg=GREEN)
-        count_down(work_sec)
+        # work_sec
+        count_down(5)
 
 
 # ------------------------------------------------- COUNTDOWN MECHANISM ---------------------------------------------- #
@@ -51,7 +57,8 @@ def count_down(count):
     else:
         # Once we reach 0, it calls start timer again to start the new time
         start_timer()
-
+        number_of_checkmarks = REPS // 2
+        checkmark_label.config(text=f"{CHECKMARK_SYMBOL*number_of_checkmarks}")
 
 # -------------------------------------------------------- UI SETUP ------------------------------------------------- #
 # Creating Window
@@ -84,7 +91,7 @@ reset_button = tk.Button(text="Reset", highlightthickness=0)
 reset_button.grid(row=2, column=2)
 
 # ------- Create Checkmark -------#
-checkmark_label = tk.Label(text="🍙", font=30, bg=YELLOW)
+checkmark_label = tk.Label(font=30, bg=YELLOW)
 checkmark_label.grid(row=3, column=1)
 
 # Keeps window open
