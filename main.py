@@ -11,12 +11,24 @@ SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
 REPS = 0
 CHECKMARK_SYMBOL = "🍙"
-
+timer = None
+# for testing app with shorter times to see if code works
+test_time_1, test_time_2, test_time_3 = [5, 10, 7]
 
 # ---------------------------------------------------- TIMER RESET -------------------------------------------------- #
 
 def reset_timer():
-    
+    # stops the timer
+    window.after_cancel(timer)
+    # reset title text
+    timer_label.config(text="Timer")
+    # reset timer text
+    canvas.itemconfig(timer_text, text="00:00")
+    # reset reps
+    global REPS
+    REPS = 0
+
+
 # ------------------------------------------------------ TIMER MECHANISM -------------------------------------------- #
 def start_timer():
     global REPS
@@ -28,16 +40,19 @@ def start_timer():
 
     if REPS % 8 == 0:
         # long_break_sec
-        count_down(20)
+        # test_time_1
+        count_down(long_break_sec)
         timer_label.config(text="Long Break", fg=RED)
     elif REPS % 2 == 0:
         # short_break_sec
-        count_down(10)
+        # test_time_2
+        count_down(short_break_sec)
         timer_label.config(text="Short Break", fg=PINK)
     else:
         timer_label.config(text="Time to Work", fg=GREEN)
         # work_sec
-        count_down(5)
+        # test_time_3
+        count_down(work_sec)
 
 
 # ------------------------------------------------- COUNTDOWN MECHANISM ---------------------------------------------- #
@@ -50,15 +65,20 @@ def count_down(count):
     # Formatting the time
     if count_seconds < 10:
         count_seconds = f"0{count_seconds}"
+
     # This is changing the text in the tomato, the 00:00
     canvas.itemconfig(timer_text, text=f"{count_minutes}:{count_seconds}")
+
     if count > 0:
-        window.after(1000, count_down, count - 1)
+        global timer
+        # after every second, call count_down, and subtact 1 from count
+        timer = window.after(1000, count_down, count - 1)
     else:
         # Once we reach 0, it calls start timer again to start the new time
         start_timer()
         number_of_checkmarks = REPS // 2
-        checkmark_label.config(text=f"{CHECKMARK_SYMBOL*number_of_checkmarks}")
+        checkmark_label.config(text=f"{CHECKMARK_SYMBOL * number_of_checkmarks}")
+
 
 # -------------------------------------------------------- UI SETUP ------------------------------------------------- #
 # Creating Window
@@ -87,7 +107,7 @@ timer_label.grid(row=0, column=1)
 start_button = tk.Button(text="Start", highlightthickness=0, command=start_timer)
 start_button.grid(row=2, column=0)
 
-reset_button = tk.Button(text="Reset", highlightthickness=0)
+reset_button = tk.Button(text="Reset", highlightthickness=0, command=reset_timer)
 reset_button.grid(row=2, column=2)
 
 # ------- Create Checkmark -------#
